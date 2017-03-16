@@ -11,14 +11,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Tip:"
+        android:text="@string/tipTitle"
         android:textAlignment="textEnd"
+        android:gravity="end"
         android:textAllCaps="false"
         android:textSize="36sp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="68dp" />
+        android:layout_marginLeft="16dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <GridLayout
         android:layout_width="wrap_content"
@@ -34,41 +37,53 @@
         app:layout_constraintBottom_toTopOf="@+id/gridLayout"
         android:id="@+id/gridLayout2">
 
-        <Button android:text="1"
-            android:id="@+id/One" />
+        <Button
+            android:id="@+id/One"
+            android:text="@string/one" />
 
-        <Button android:text="2"
-            android:id="@+id/Two"/>
+        <Button
+            android:id="@+id/Two"
+            android:text="@string/two" />
 
-        <Button android:text="3"
-            android:id="@+id/Three"/>
+        <Button
+            android:id="@+id/Three"
+            android:text="@string/three" />
 
-        <Button android:text="4"
-            android:id="@+id/Four"/>
+        <Button
+            android:id="@+id/Four"
+            android:text="@string/four" />
 
-        <Button android:text="5"
-            android:id="@+id/Five" />
+        <Button
+            android:id="@+id/Five"
+            android:text="@string/five" />
 
-        <Button android:text="6"
-            android:id="@+id/Six"/>
+        <Button
+            android:id="@+id/Six"
+            android:text="@string/six" />
 
-        <Button android:text="7"
-            android:id="@+id/Seven" />
+        <Button
+            android:id="@+id/Seven"
+            android:text="@string/seven" />
 
-        <Button android:text="8"
-            android:id="@+id/Eight" />
+        <Button
+            android:id="@+id/Eight"
+            android:text="@string/eight" />
 
-        <Button android:text="9"
-            android:id="@+id/Nine"/>
+        <Button
+            android:id="@+id/Nine"
+            android:text="@string/nine" />
 
-        <Button android:text="0"
-            android:id="@+id/Zero"/>
+        <Button
+            android:id="@+id/Zero"
+            android:text="@string/zero" />
 
-        <Button android:text="."
-            android:id="@+id/Point" />
+        <Button
+            android:id="@+id/Point"
+            android:text="@string/point" />
 
-        <Button android:text="C"
-            android:id="@+id/Clear"/>
+        <Button
+            android:id="@+id/Clear"
+            android:text="@string/clear" />
     </GridLayout>
 
     <GridLayout
@@ -88,42 +103,41 @@
 
         <Button
             android:id="@+id/fifteenTip"
-            android:text="15%" />
+            android:text="@string/fifteen" />
 
         <Button
             android:id="@+id/twentyTip"
-            android:text="20%" />
+            android:text="@string/twenty" />
 
         <Button
-            android:id="@+id/goodTip"
-            android:text="Good Person" />
+            android:id="@+id/twentyfiveTip"
+            android:text="@string/twentyfive" />
 
     </GridLayout>
 
-    <EditText
+    <TextView
         android:id="@+id/tipAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:ems="10"
-        android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
+        android:gravity="end"
         android:textSize="36sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tipText"
-        app:layout_constraintLeft_toRightOf="@+id/tipText" />
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
-    <EditText
+    <TextView
         android:id="@+id/calcTotal"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:ems="10"
-        android:inputType="numberDecimal"
+        android:layout_marginRight="0dp"
+        android:layout_marginEnd="0dp"
         android:textAlignment="textEnd"
-        android:textSize="36sp"
+        android:gravity="end"
+        android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/gridLayout2"
-        app:layout_constraintLeft_toLeftOf="@+id/gridLayout2"
         app:layout_constraintRight_toRightOf="@+id/gridLayout2" />
 
 </android.support.constraint.ConstraintLayout>

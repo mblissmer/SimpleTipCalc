@@ -12,23 +12,30 @@ import java.text.DecimalFormat;
 public class MainActivity extends AppCompatActivity {
 
     private double tip = 0.15;
-    private boolean goodTip = false;
-    private EditText calcTotal;
-    private EditText tipAmount;
-    DecimalFormat df = new DecimalFormat("#.##");
+    private TextView calcTotal;
+    private TextView tipAmount;
+    private TextView tipText;
+    DecimalFormat df = new DecimalFormat("0.00");
+    String temp = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        calcTotal = (EditText) findViewById(R.id.calcTotal);
-        tipAmount = (EditText) findViewById(R.id.tipAmount);
+        calcTotal = (TextView) findViewById(R.id.calcTotal);
+        tipAmount = (TextView) findViewById(R.id.tipAmount);
+        tipText = (TextView) findViewById(R.id.tipText);
+
+        UpdateTipText(R.string.fifteen);
+
 
         final Button zero = (Button) findViewById(R.id.Zero);
         zero.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "0");
+
+                temp = calcTotal.getText().toString() + getString(R.string.zero);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -36,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         final Button one = (Button) findViewById(R.id.One);
         one.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "1");
+                temp = calcTotal.getText().toString() + getString(R.string.one);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -44,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         final Button two = (Button) findViewById(R.id.Two);
         two.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "2");
+                temp = calcTotal.getText().toString() + getString(R.string.two);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -52,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
         final Button three = (Button) findViewById(R.id.Three);
         three.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "3");
+                temp = calcTotal.getText().toString() + getString(R.string.three);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -60,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
         final Button four = (Button) findViewById(R.id.Four);
         four.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "4");
+                temp = calcTotal.getText().toString() + getString(R.string.four);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -68,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
         final Button five = (Button) findViewById(R.id.Five);
         five.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "5");
+                temp = calcTotal.getText().toString() + getString(R.string.five);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -76,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
         final Button six = (Button) findViewById(R.id.Six);
         six.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "6");
+                temp = calcTotal.getText().toString() + getString(R.string.six);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -84,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
         final Button seven = (Button) findViewById(R.id.Seven);
         seven.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "7");
+                temp = calcTotal.getText().toString() + getString(R.string.seven);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -92,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
         final Button eight = (Button) findViewById(R.id.Eight);
         eight.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "8");
+                temp = calcTotal.getText().toString() + getString(R.string.eight);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -100,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
         final Button nine = (Button) findViewById(R.id.Nine);
         nine.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + "9");
+                temp = calcTotal.getText().toString() + getString(R.string.nine);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -108,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
         final Button point = (Button) findViewById(R.id.Point);
         point.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                calcTotal.setText(calcTotal.getText() + ".");
+                temp = calcTotal.getText().toString() + getString(R.string.point);
+                calcTotal.setText(temp);
                 UpdateTip();
             }
         });
@@ -125,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
         fifteenTip.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 tip = 0.15f;
-                goodTip = false;
                 UpdateTip();
+                UpdateTipText(R.string.fifteen);
             }
         });
 
@@ -134,42 +151,39 @@ public class MainActivity extends AppCompatActivity {
         twentyTip.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 tip = 0.2f;
-                goodTip = false;
                 UpdateTip();
+                UpdateTipText(R.string.twenty);
             }
         });
 
-        final Button good = (Button) findViewById(R.id.goodTip);
-        good.setOnClickListener(new View.OnClickListener(){
+        final Button twentyfiveTip = (Button) findViewById(R.id.twentyfiveTip);
+        twentyfiveTip.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                tip = 0.2f;
-                goodTip = true;
+                tip = 0.25f;
                 UpdateTip();
+                UpdateTipText(R.string.twentyfive);
             }
         });
 
     }
 
+    void UpdateTipText(int id){
+        String newTipText = getString(id) + " " + getString(R.string.tipTitle);
+        tipText.setText(newTipText);
+    }
+
     void UpdateTip(){
-        if (tip == 0){
-            tipAmount.setText("0");
-        }
+        if (tip == 0) tipAmount.setText("0");
         else {
-            double cash = 0;
+            double cash;
             try {
                 cash = Double.parseDouble(calcTotal.getText().toString());
             }
             catch (NullPointerException|NumberFormatException ex) {
+                cash = 0;
             }
-
-            if (!goodTip) {
-                String tipString = (df.format(cash * tip));
-                tipAmount.setText(tipString, TextView.BufferType.SPANNABLE);
-            }
-            else {
-
-            }
+            String tipString = (df.format(cash * tip));
+            tipAmount.setText(tipString, TextView.BufferType.SPANNABLE);
         }
-
     }
 }
