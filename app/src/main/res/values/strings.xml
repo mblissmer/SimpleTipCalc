@@ -1,21 +1,15 @@
 <resources>
     <string name="app_name">Simple Tip Calculator</string>
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
-    <string name="five">5</string>
-    <string name="six">6</string>
-    <string name="seven">7</string>
-    <string name="eight">8</string>
-    <string name="nine">9</string>
-    <string name="zero">0</string>
-    <string name="point">.</string>
-    <string name="clear">C</string>
-    <string name="fifteen">15%</string>
-    <string name="twenty">20%</string>
-    <string name="twentyfive">25%</string>
-    <string name="tipTitle">Tip:</string>
+    <string name="billHint">Enter Your Bill Total</string>
+    <string name="headCountString">Head Count</string>
+    <string name="roundingString">Round For</string>
+    <string name="tipPercentageString">Tip Percentage</string>
+    <string name="tipEachString">Tip Each:</string>
+    <string name="billEachString">Bill Each:</string>
+    <string name="tipTotalString">Tip Total:</string>
+    <string name="totalBillString">Bill Total:</string>
+    <string name="billString">Bill</string>
+    <string name="moneyPlaceholder">0.00</string>
     <string-array name="headCountArray">
         <item>1</item>
         <item>2</item>
@@ -27,6 +21,24 @@
         <item>8</item>
         <item>9</item>
         <item>10</item>
+    </string-array>
+    <string-array name="tipAmountArray">
+        <item>15%</item>
+        <item>20%</item>
+        <item>25%</item>
+        <item>30%</item>
+    </string-array>
+    <string name="noneArray">None</string>
+    <string name="tipEachArray">Tip Each</string>
+    <string name="tipTotalArray">Tip Total</string>
+    <string name="billEachArray">Bill Each</string>
+    <string name="billTotalArray">Bill Total</string>
+    <string-array name="roundFor">
+        <item>@string/noneArray</item>
+        <item>@string/tipEachArray</item>
+        <item>@string/tipTotalArray</item>
+        <item>@string/billEachArray</item>
+        <item>@string/billTotalArray</item>
     </string-array>
 
 </resources>

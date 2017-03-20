@@ -2,11 +2,15 @@ package com.fairenough.simpletipcalculator;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 
@@ -14,188 +18,269 @@ import java.text.DecimalFormat;
 public class MainActivity extends AppCompatActivity {
 
     private double tip = 0.15;
-    private TextView calcTotal;
-    private TextView tipAmount;
-    private TextView tipText;
-    DecimalFormat df = new DecimalFormat("0.00");
-    String temp = "";
+    private double bill = 0;
+    private int headCount = 0;
+    private DecimalFormat df = new DecimalFormat("0.00");
+    private int roundOption;
+    private TextView tipEachTV;
+    private TextView tipTotalTV;
+    private TextView billEachTV;
+    private TextView billTotalTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.headCountArray, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-
-        calcTotal = (TextView) findViewById(R.id.calcTotal);
-        tipAmount = (TextView) findViewById(R.id.tipAmount);
-        tipText = (TextView) findViewById(R.id.tipText);
-
-        UpdateTipText(R.string.fifteen);
+        //setting up all fields
+        tipEachTV = (TextView)findViewById(R.id.tipEachNum);
+        tipTotalTV  = (TextView)findViewById(R.id.tipTotalNum);
+        billEachTV  = (TextView)findViewById(R.id.billEachNum);
+        billTotalTV = (TextView)findViewById(R.id.billTotalNum);
 
 
-        final Button zero = (Button) findViewById(R.id.Zero);
-        zero.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
+        //setting up rounding spinner
+        Spinner roundingOption = (Spinner) findViewById(R.id.roundingOptionSpinner);
+        ArrayAdapter<CharSequence> roundingAdapter = ArrayAdapter.createFromResource(this,R.array.roundFor, android.R.layout.simple_spinner_item);
+        roundingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roundingOption.setAdapter(roundingAdapter);
 
-                temp = calcTotal.getText().toString() + getString(R.string.zero);
-                calcTotal.setText(temp);
-                UpdateTip();
+        roundingOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                roundOption = position;
+                UpdateTotals();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                roundOption = 0;
+                UpdateTotals();
             }
         });
+        //end rounding spinner
 
-        final Button one = (Button) findViewById(R.id.One);
-        one.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.one);
-                calcTotal.setText(temp);
-                UpdateTip();
+        //setting up the headcount spinner
+        Spinner pplCount = (Spinner) findViewById(R.id.headCountSpinner);
+        ArrayAdapter<CharSequence> pplAdapter = ArrayAdapter.createFromResource(this,R.array.headCountArray, android.R.layout.simple_spinner_item);
+        pplAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        pplCount.setAdapter(pplAdapter);
+
+        pplCount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                headCount = Integer.parseInt(parent.getItemAtPosition(position).toString());
+                //parent.getItemAtPosition(position), returns text of item at that position
+                UpdateTotals();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                headCount = 0;
+                UpdateTotals();
             }
         });
+        //end headcount spinner
 
-        final Button two = (Button) findViewById(R.id.Two);
-        two.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.two);
-                calcTotal.setText(temp);
-                UpdateTip();
+        //setting up the tip amount spinner
+        Spinner tipAmt = (Spinner) findViewById(R.id.tipPercentSpinner);
+        ArrayAdapter<CharSequence> tipAmtAdapter = ArrayAdapter.createFromResource(this,R.array.tipAmountArray, android.R.layout.simple_spinner_item);
+        tipAmtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tipAmt.setAdapter(tipAmtAdapter);
+
+        tipAmt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                tip = Double.parseDouble(parent.getItemAtPosition(position).toString().substring(0,2)) / 100;
+                //parent.getItemAtPosition(position), returns text of item at that position
+                UpdateTotals();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                tip = 0;
+                UpdateTotals();
             }
         });
+        //end tip amount spinner
 
-        final Button three = (Button) findViewById(R.id.Three);
-        three.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.three);
-                calcTotal.setText(temp);
-                UpdateTip();
+
+        //setting up bill text field
+        final EditText billField = (EditText) findViewById(R.id.billField);
+        billField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    bill = Double.parseDouble(billField.getText().toString());
+                }
+                catch(NullPointerException|NumberFormatException ex){
+                    bill = 0;
+                }
+
+                UpdateTotals();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                UpdateTotals();
             }
         });
-
-        final Button four = (Button) findViewById(R.id.Four);
-        four.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.four);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button five = (Button) findViewById(R.id.Five);
-        five.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.five);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button six = (Button) findViewById(R.id.Six);
-        six.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.six);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button seven = (Button) findViewById(R.id.Seven);
-        seven.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.seven);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button eight = (Button) findViewById(R.id.Eight);
-        eight.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.eight);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button nine = (Button) findViewById(R.id.Nine);
-        nine.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.nine);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button point = (Button) findViewById(R.id.Point);
-        point.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                temp = calcTotal.getText().toString() + getString(R.string.point);
-                calcTotal.setText(temp);
-                UpdateTip();
-            }
-        });
-
-        final Button clr = (Button) findViewById(R.id.Clear);
-        clr.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                calcTotal.setText("");
-                UpdateTip();
-            }
-        });
-
-        final Button fifteenTip = (Button) findViewById(R.id.fifteenTip);
-        fifteenTip.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                tip = 0.15f;
-                UpdateTip();
-                UpdateTipText(R.string.fifteen);
-            }
-        });
-
-        final Button twentyTip = (Button) findViewById(R.id.twentyTip);
-        twentyTip.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                tip = 0.2f;
-                UpdateTip();
-                UpdateTipText(R.string.twenty);
-            }
-        });
-
-        final Button twentyfiveTip = (Button) findViewById(R.id.twentyfiveTip);
-        twentyfiveTip.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                tip = 0.25f;
-                UpdateTip();
-                UpdateTipText(R.string.twentyfive);
-            }
-        });
-
+        //end bill text field
     }
 
-    void UpdateTipText(int id){
-        String newTipText = getString(id) + " " + getString(R.string.tipTitle);
-        tipText.setText(newTipText);
+    double roundUp(double input, int roundTo){
+        return Math.ceil(input/roundTo) * roundTo;
     }
 
-    void UpdateTip(){
-        if (tip == 0) tipAmount.setText("0");
-        else {
-            double cash;
-            try {
-                cash = Double.parseDouble(calcTotal.getText().toString());
-            }
-            catch (NullPointerException|NumberFormatException ex) {
-                cash = 0;
-            }
-            String tipString = (df.format(cash * tip));
-            tipAmount.setText(tipString, TextView.BufferType.SPANNABLE);
+    void UpdateTotals(){
+
+        switch (roundOption){
+            case 0:
+                NoRounding();
+                break;
+            case 1:
+                RoundForTipEach();
+                break;
+            case 2:
+                RoundForTipTotal();
+                break;
+            case 3:
+                RoundForBillEach();
+                break;
+            case 4:
+                RoundForBillTotal();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid Rounding Option");
         }
+
+    }
+
+    void NoRounding(){
+        double tipEach;
+        double tipTotal;
+        double billEach;
+        double billTotal;
+
+        try {
+            tipEach = (bill * tip) / headCount;
+            tipTotal = tipEach * headCount;
+            billTotal = bill + tipTotal;
+            billEach = billTotal / headCount;
+        }catch (ArithmeticException ex){
+            tipEach = 0;
+            tipTotal = 0;
+            billEach = 0;
+            billTotal = 0;
+        }
+
+        tipEachTV.setText(df.format(tipEach));
+        tipTotalTV.setText(df.format(tipTotal));
+        billEachTV.setText(df.format(billEach));
+        billTotalTV.setText(df.format(billTotal));
+    }
+    void RoundForTipEach(){
+        double tipEach;
+        double tipTotal;
+        double billEach;
+        double billTotal;
+
+        try {
+            tipEach = (bill * tip) / headCount;
+            tipEach = roundUp(tipEach, 1);
+            tipTotal = tipEach * headCount;
+            billTotal = bill + tipTotal;
+            billEach = billTotal / headCount;
+        }catch (ArithmeticException ex){
+            tipEach = 0;
+            tipTotal = 0;
+            billEach = 0;
+            billTotal = 0;
+        }
+
+        tipEachTV.setText(df.format(tipEach));
+        tipTotalTV.setText(df.format(tipTotal));
+        billEachTV.setText(df.format(billEach));
+        billTotalTV.setText(df.format(billTotal));
+    }
+    void RoundForTipTotal(){
+        double tipEach;
+        double tipTotal;
+        double billEach;
+        double billTotal;
+
+        try {
+            tipTotal = bill * tip;
+            tipTotal = roundUp(tipTotal, 1);
+            tipEach = tipTotal / headCount;
+            billTotal = bill + tipTotal;
+            billEach = billTotal / headCount;
+        }catch (ArithmeticException ex){
+            tipEach = 0;
+            tipTotal = 0;
+            billEach = 0;
+            billTotal = 0;
+        }
+
+        tipEachTV.setText(df.format(tipEach));
+        tipTotalTV.setText(df.format(tipTotal));
+        billEachTV.setText(df.format(billEach));
+        billTotalTV.setText(df.format(billTotal));
+    }
+    void RoundForBillEach(){
+        double tipEach;
+        double tipTotal;
+        double billEach;
+        double billTotal;
+
+        try {
+            tipTotal = bill * tip;
+            billTotal = bill + tipTotal;
+            billEach = billTotal / headCount;
+            billEach = roundUp(billEach, 1);
+            tipEach = billEach - (bill / headCount);
+            tipTotal = tipEach * headCount;
+            billTotal = bill + tipTotal;
+        }catch (ArithmeticException ex){
+            tipEach = 0;
+            tipTotal = 0;
+            billEach = 0;
+            billTotal = 0;
+        }
+
+        tipEachTV.setText(df.format(tipEach));
+        tipTotalTV.setText(df.format(tipTotal));
+        billEachTV.setText(df.format(billEach));
+        billTotalTV.setText(df.format(billTotal));
+    }
+    void RoundForBillTotal(){
+        double tipEach;
+        double tipTotal;
+        double billEach;
+        double billTotal;
+
+        try {
+            tipTotal = (bill * tip);
+            billTotal = bill + tipTotal;
+            billTotal = roundUp(billTotal, 1);
+            tipTotal = billTotal - bill;
+            tipEach = tipTotal / headCount;
+            billEach = billTotal / headCount;
+        }catch (ArithmeticException ex){
+            tipEach = 0;
+            tipTotal = 0;
+            billEach = 0;
+            billTotal = 0;
+        }
+
+        tipEachTV.setText(df.format(tipEach));
+        tipTotalTV.setText(df.format(tipTotal));
+        billEachTV.setText(df.format(billEach));
+        billTotalTV.setText(df.format(billTotal));
     }
 }
