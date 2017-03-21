@@ -1,9 +1,18 @@
 package com.fairenough.simpletipcalculator;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.MenuItemHoverListener;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +21,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.text.DecimalFormat;
 
 
@@ -37,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
         tipTotalTV  = (TextView)findViewById(R.id.tipTotalNum);
         billEachTV  = (TextView)findViewById(R.id.billEachNum);
         billTotalTV = (TextView)findViewById(R.id.billTotalNum);
+
+        //setting up toolbar
+        Toolbar mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+        setSupportActionBar(mainToolbar);
+        //end toolbar
 
 
         //setting up rounding spinner
@@ -133,45 +149,100 @@ public class MainActivity extends AppCompatActivity {
         //end bill text field
     }
 
-    double roundUp(double input, int roundTo){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.appbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()) {
+            case R.id.action_rate:
+                Intent rateMe = new Intent(Intent.ACTION_VIEW);
+                rateMe.setData(Uri.parse("market://details?id=com.fairenough.simpletipcalculator"));
+                if (!TryStartActivity(rateMe)) Toast.makeText(this, "Could not open Android Market. Sorry!", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_share:
+                Intent shareMe = new Intent();
+                shareMe.setAction(Intent.ACTION_SEND);
+                shareMe.putExtra(Intent.EXTRA_TEXT, "This is my test text, plus a link: market://details?id=com.fairenough.simpletipcalculator");
+                shareMe.setType("text/plain");
+                startActivity(Intent.createChooser(shareMe, getResources().getText(R.string.shareSendText)));
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
+
+    private boolean TryStartActivity(Intent thisIntent){
+        try{
+            startActivity(thisIntent);
+            return true;
+        }
+        catch (ActivityNotFoundException ex){
+            return false;
+        }
+    }
+
+    double roundUp(double input){
+        int roundTo;
+        if (input < 10) roundTo = 1;
+        else roundTo = 5;
         return Math.ceil(input/roundTo) * roundTo;
     }
 
     void UpdateTotals(){
 
+        double tipEach;
+        double tipTotal;
+        double billEach;
+        double billTotal;
+        try {
         switch (roundOption){
-            case 0:
-                NoRounding();
+            case 0: //no rounding
+                tipEach = (bill * tip) / headCount;
+                tipTotal = tipEach * headCount;
+                billTotal = bill + tipTotal;
+                billEach = billTotal / headCount;
                 break;
-            case 1:
-                RoundForTipEach();
+            case 1: //round for tip each
+                tipEach = (bill * tip) / headCount;
+                tipEach = roundUp(tipEach);
+                tipTotal = tipEach * headCount;
+                billTotal = bill + tipTotal;
+                billEach = billTotal / headCount;
                 break;
-            case 2:
-                RoundForTipTotal();
+            case 2: //round for tip total
+                tipTotal = bill * tip;
+                tipTotal = roundUp(tipTotal);
+                tipEach = tipTotal / headCount;
+                billTotal = bill + tipTotal;
+                billEach = billTotal / headCount;
                 break;
-            case 3:
-                RoundForBillEach();
+            case 3: //round for bill each
+                tipTotal = bill * tip;
+                billTotal = bill + tipTotal;
+                billEach = billTotal / headCount;
+                billEach = roundUp(billEach);
+                tipEach = billEach - (bill / headCount);
+                tipTotal = tipEach * headCount;
+                billTotal = bill + tipTotal;
                 break;
-            case 4:
-                RoundForBillTotal();
+            case 4: //round for bill total
+                tipTotal = (bill * tip);
+                billTotal = bill + tipTotal;
+                billTotal = roundUp(billTotal);
+                tipTotal = billTotal - bill;
+                tipEach = tipTotal / headCount;
+                billEach = billTotal / headCount;
                 break;
             default:
-                throw new IllegalArgumentException("Invalid Rounding Option");
+                throw new ArithmeticException();
         }
-
-    }
-
-    void NoRounding(){
-        double tipEach;
-        double tipTotal;
-        double billEach;
-        double billTotal;
-
-        try {
-            tipEach = (bill * tip) / headCount;
-            tipTotal = tipEach * headCount;
-            billTotal = bill + tipTotal;
-            billEach = billTotal / headCount;
         }catch (ArithmeticException ex){
             tipEach = 0;
             tipTotal = 0;
@@ -183,104 +254,6 @@ public class MainActivity extends AppCompatActivity {
         tipTotalTV.setText(df.format(tipTotal));
         billEachTV.setText(df.format(billEach));
         billTotalTV.setText(df.format(billTotal));
-    }
-    void RoundForTipEach(){
-        double tipEach;
-        double tipTotal;
-        double billEach;
-        double billTotal;
 
-        try {
-            tipEach = (bill * tip) / headCount;
-            tipEach = roundUp(tipEach, 1);
-            tipTotal = tipEach * headCount;
-            billTotal = bill + tipTotal;
-            billEach = billTotal / headCount;
-        }catch (ArithmeticException ex){
-            tipEach = 0;
-            tipTotal = 0;
-            billEach = 0;
-            billTotal = 0;
-        }
-
-        tipEachTV.setText(df.format(tipEach));
-        tipTotalTV.setText(df.format(tipTotal));
-        billEachTV.setText(df.format(billEach));
-        billTotalTV.setText(df.format(billTotal));
-    }
-    void RoundForTipTotal(){
-        double tipEach;
-        double tipTotal;
-        double billEach;
-        double billTotal;
-
-        try {
-            tipTotal = bill * tip;
-            tipTotal = roundUp(tipTotal, 1);
-            tipEach = tipTotal / headCount;
-            billTotal = bill + tipTotal;
-            billEach = billTotal / headCount;
-        }catch (ArithmeticException ex){
-            tipEach = 0;
-            tipTotal = 0;
-            billEach = 0;
-            billTotal = 0;
-        }
-
-        tipEachTV.setText(df.format(tipEach));
-        tipTotalTV.setText(df.format(tipTotal));
-        billEachTV.setText(df.format(billEach));
-        billTotalTV.setText(df.format(billTotal));
-    }
-    void RoundForBillEach(){
-        double tipEach;
-        double tipTotal;
-        double billEach;
-        double billTotal;
-
-        try {
-            tipTotal = bill * tip;
-            billTotal = bill + tipTotal;
-            billEach = billTotal / headCount;
-            billEach = roundUp(billEach, 1);
-            tipEach = billEach - (bill / headCount);
-            tipTotal = tipEach * headCount;
-            billTotal = bill + tipTotal;
-        }catch (ArithmeticException ex){
-            tipEach = 0;
-            tipTotal = 0;
-            billEach = 0;
-            billTotal = 0;
-        }
-
-        tipEachTV.setText(df.format(tipEach));
-        tipTotalTV.setText(df.format(tipTotal));
-        billEachTV.setText(df.format(billEach));
-        billTotalTV.setText(df.format(billTotal));
-    }
-    void RoundForBillTotal(){
-        double tipEach;
-        double tipTotal;
-        double billEach;
-        double billTotal;
-
-        try {
-            tipTotal = (bill * tip);
-            billTotal = bill + tipTotal;
-            billTotal = roundUp(billTotal, 1);
-            tipTotal = billTotal - bill;
-            tipEach = tipTotal / headCount;
-            billEach = billTotal / headCount;
-        }catch (ArithmeticException ex){
-            tipEach = 0;
-            tipTotal = 0;
-            billEach = 0;
-            billTotal = 0;
-        }
-
-        tipEachTV.setText(df.format(tipEach));
-        tipTotalTV.setText(df.format(tipTotal));
-        billEachTV.setText(df.format(billEach));
-        billTotalTV.setText(df.format(billTotal));
     }
 }

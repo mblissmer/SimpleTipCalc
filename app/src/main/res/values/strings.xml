@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">Simple Tip Calculator</string>
-    <string name="billHint">Enter Your Bill Total</string>
+    <string name="app_name">Tip Calculator</string>
+    <string name="share">Share</string>
+    <string name="shareSendText">Send This App Via:</string>
+    <string name="rate">Rate</string>
+    <string name="billHint">Enter Your Bill Amount</string>
     <string name="headCountString">Head Count</string>
     <string name="roundingString">Round For</string>
     <string name="tipPercentageString">Tip Percentage</string>
