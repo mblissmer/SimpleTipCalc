@@ -8,18 +8,15 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mainToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
         app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
@@ -28,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:text="@string/billString"
-        android:textSize="24sp"
+        android:textSize="36sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/billField" />
@@ -37,54 +34,47 @@
         android:id="@+id/headCountText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/headCountString"
-        android:textAlignment="textEnd"
         android:layout_gravity="end"
-        android:layout_marginLeft="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
+        android:text="@string/headCountString"
+        android:textAlignment="center"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/headCountPicker"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/headCountPicker"
+        app:layout_constraintBaseline_toBaselineOf="@+id/roundingText"
+        app:layout_constraintHorizontal_bias="0.492" />
 
     <TextView
         android:id="@+id/roundingText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/roundingString"
-        android:textAlignment="textStart"
         android:layout_gravity="start"
+        android:layout_marginTop="8dp"
+        android:text="@string/roundingString"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
     <TextView
         android:id="@+id/billEachText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="start"
         android:layout_marginBottom="32dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
         android:text="@string/billEachString"
         android:textAlignment="textStart"
-        android:layout_gravity="start"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/tipTotalText"
-        app:layout_constraintLeft_toLeftOf="@+id/tipTotalText" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/tipText"
+        app:layout_constraintLeft_toLeftOf="@+id/tipText" />
 
     <TextView
-        android:id="@+id/tipEachText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/tipEachString"
-        android:textAlignment="textStart"
-        android:layout_gravity="start"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/billEachText"
-        app:layout_constraintLeft_toLeftOf="@+id/billEachText" />
-
-    <TextView
-        android:id="@+id/tipTotalText"
+        android:id="@+id/tipText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -108,24 +98,14 @@
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
-        android:id="@+id/tipEachNum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/moneyPlaceholder"
-        android:textAlignment="textEnd"
-        android:layout_gravity="end"
-        android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tipEachText"
-        app:layout_constraintRight_toRightOf="@+id/billEachNum" />
-
-    <TextView
         android:id="@+id/billEachNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/moneyPlaceholder"
         android:layout_gravity="end"
+        android:text="@string/moneyPlaceholder"
         android:textAlignment="textEnd"
         android:textSize="30sp"
+        android:visibility="invisible"
         app:layout_constraintBaseline_toBaselineOf="@+id/billEachText"
         app:layout_constraintRight_toRightOf="@+id/tipTotalNum" />
 
@@ -137,7 +117,7 @@
         android:layout_gravity="end"
         android:textAlignment="textEnd"
         android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tipTotalText"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tipText"
         app:layout_constraintRight_toRightOf="@+id/billTotalNum" />
 
     <TextView
@@ -161,47 +141,68 @@
         android:hint="@string/billHint"
         android:inputType="numberDecimal"
         android:textAlignment="center"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/tipPercentSpinner" />
-
-    <Spinner
-        android:id="@+id/headCountSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintRight_toRightOf="@+id/headCountText"
-        app:layout_constraintTop_toBottomOf="@+id/headCountText" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.502" />
 
     <TextView
         android:id="@+id/tipPercentText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tipPercentageString"
         android:layout_gravity="end"
-        android:textAlignment="textEnd"
-        app:layout_constraintHorizontal_bias="0.944"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:text="@string/tipPercentageString"
+        android:textAlignment="center"
+        app:layout_constraintBaseline_toBaselineOf="@+id/roundingText"
+        app:layout_constraintLeft_toLeftOf="@+id/tipPercentPicker"
+        app:layout_constraintRight_toRightOf="@+id/tipPercentPicker" />
+
+    <Switch
+        android:id="@+id/roundSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintLeft_toLeftOf="@+id/roundingText"
+        app:layout_constraintRight_toRightOf="@+id/roundingText"
+        app:layout_constraintTop_toBottomOf="@+id/roundingText" />
+
+    <NumberPicker
+        android:id="@+id/headCountPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/mainToolbar"
+        app:layout_constraintRight_toLeftOf="@+id/billField"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp" />
+
+    <NumberPicker
+        android:id="@+id/tipPercentPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@+id/billField"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
-    <Spinner
-        android:id="@+id/roundingOptionSpinner"
+    <TextView
+        android:id="@+id/extraPennies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/roundingText"
-        app:layout_constraintLeft_toLeftOf="@+id/roundingText" />
-
-    <Spinner
-        android:id="@+id/tipPercentSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintRight_toRightOf="@+id/tipPercentText"
-        app:layout_constraintTop_toBottomOf="@+id/tipPercentText" />
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:textAlignment="textEnd"
+        android:layout_gravity="end"
+        android:textStyle="italic"
+        app:layout_constraintRight_toRightOf="@+id/billEachNum"
+        app:layout_constraintTop_toBottomOf="@+id/billEachNum" />
 
 </android.support.constraint.ConstraintLayout>
