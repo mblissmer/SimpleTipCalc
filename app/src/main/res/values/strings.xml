@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">Tip Calculator</string>
     <string name="share">Share</string>
-    <string name="shareSendText">Send This App Via:</string>
+    <string name="shareSendText">Recommend This App Via:</string>
     <string name="rate">Rate</string>
     <string name="billHint">Bill Amount</string>
     <string name="penniesPt1">+</string>
-    <string name="penniesPt2"> Cents</string>
-    <string name="pennyPt2"> Cent</string>
+    <string name="penniesPt2">Cents</string>
+    <string name="pennyPt2">Cent</string>
+    <string name="roundedTip">Rounded Tip</string>
     <string name="headCountString">Head Count</string>
     <string name="roundingString">Rounded Up</string>
     <string name="tipPercentageString">Tip Percentage</string>
@@ -27,11 +28,11 @@
         <item>9</item>
         <item>10</item>
     </string-array>
-    <string-array name="tipAmountArray">
-        <item>18%</item>
-        <item>20%</item>
-        <item>25%</item>
-        <item>30%</item>
-    </string-array>
+    <!--<string-array name="tipAmountArray">-->
+        <!--<item>18%</item>-->
+        <!--<item>20%</item>-->
+        <!--<item>25%</item>-->
+        <!--<item>30%</item>-->
+    <!--</string-array>-->
 
 </resources>

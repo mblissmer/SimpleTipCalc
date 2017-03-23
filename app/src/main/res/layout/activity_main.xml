@@ -58,6 +58,20 @@
         app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
     <TextView
+        android:id="@+id/actualRoundedTipText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="24dp"
+        android:text="@string/roundedTip"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/roundSwitch" />
+
+    <TextView
         android:id="@+id/billEachText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -140,11 +154,12 @@
         android:hint="@string/billHint"
         android:inputType="numberDecimal"
         android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.502" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tipPercentText"
@@ -202,5 +217,15 @@
         android:textStyle="italic"
         app:layout_constraintRight_toRightOf="@+id/billEachNum"
         app:layout_constraintTop_toBottomOf="@+id/billEachNum" />
+
+    <TextView
+        android:id="@+id/roundedPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/actualRoundedTipText" />
 
 </android.support.constraint.ConstraintLayout>

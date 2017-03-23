@@ -19,6 +19,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tipTotalTV;
     private TextView billTotalTV;
     private TextView extraPenniesTV;
+    private TextView roundedTipTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
         tipTotalTV  = (TextView)findViewById(R.id.tipTotalNum);
         billTotalTV = (TextView)findViewById(R.id.billTotalNum);
         extraPenniesTV = (TextView) findViewById(R.id.extraPennies);
+        roundedTipTV = (TextView) findViewById(R.id.roundedPercent);
         final TextView billEachTitle = (TextView)findViewById(R.id.billEachText);
+        final TextView roundedPercentTitle = (TextView) findViewById(R.id.actualRoundedTipText);
 
         //setting up toolbar
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
@@ -62,6 +67,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 doRounding = isChecked;
+                if (isChecked){
+                    roundedTipTV.setVisibility(View.VISIBLE);
+                    roundedPercentTitle.setVisibility(View.VISIBLE);
+                    extraPenniesTV.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    roundedTipTV.setVisibility(View.INVISIBLE);
+                    roundedPercentTitle.setVisibility(View.INVISIBLE);
+                    extraPenniesTV.setVisibility(View.VISIBLE);
+                }
                 UpdateTotals();
             }
         });
@@ -144,22 +159,29 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case R.id.action_rate:
-                Intent rateMe = new Intent(Intent.ACTION_VIEW);
-                rateMe.setData(Uri.parse("market://details?id=com.fairenough.simpletipcalculator"));
-                if (!TryStartActivity(rateMe)) Toast.makeText(this, "Could not open Android Market. Sorry!", Toast.LENGTH_SHORT).show();
+                LinkToRatingPage();
                 break;
             case R.id.action_share:
-                Intent shareMe = new Intent();
-                shareMe.setAction(Intent.ACTION_SEND);
-                shareMe.putExtra(Intent.EXTRA_TEXT, "This is my test text, plus a link: market://details?id=com.fairenough.simpletipcalculator");
-                shareMe.setType("text/plain");
-                startActivity(Intent.createChooser(shareMe, getResources().getText(R.string.shareSendText)));
+                ShareTheApp();
                 break;
             default:
                 break;
         }
-
         return true;
+    }
+
+    private void LinkToRatingPage(){
+        Intent rateMe = new Intent(Intent.ACTION_VIEW);
+        rateMe.setData(Uri.parse("market://details?id=com.fairenough.simpletipcalculator"));
+        if (!TryStartActivity(rateMe)) Toast.makeText(this, "Could not open Android Market. Sorry!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void ShareTheApp(){
+        Intent shareMe = new Intent();
+        shareMe.setAction(Intent.ACTION_SEND);
+        shareMe.putExtra(Intent.EXTRA_TEXT, "Check out this tip calculator! https://play.google.com/store/apps/details?id=com.fairenough.simpletipcalculator");
+        shareMe.setType("text/plain");
+        startActivity(Intent.createChooser(shareMe, getResources().getText(R.string.shareSendText)));
     }
 
     private boolean TryStartActivity(Intent thisIntent){
@@ -178,34 +200,43 @@ public class MainActivity extends AppCompatActivity {
             intInput++;
         }
         return (double) intInput;
-//        int roundTo;
-//        if (input < 10) roundTo = 1;
-//        else roundTo = 5;
-//        return Math.ceil(input/roundTo) * roundTo;
     }
 
     void UpdateTotals(){
-        double billEach;
-        double tipTotal;
-        double billTotal;
         if (doRounding){
-            //TODO
-            tipTotal = tip * bill;
-            billTotal = bill + tipTotal;
-            billTotal = roundUp(billTotal);
-            tipTotal = billTotal - bill;
-            billEach = billTotal / headCount;
-            //replace this, just wanted to suppress a warning
+            CalculateAndDisplayTotalsWithRounding();
         } else {
-            tipTotal = tip * bill;
-            billTotal = bill + tipTotal;
-            billEach = billTotal / headCount;
-
-
+            CalculateAndDisplayTotals();
         }
+    }
+
+    void CalculateAndDisplayTotalsWithRounding(){
+        double tipTotal = tip * bill;
+        double billTotal = bill + tipTotal;
+        billTotal = roundUp(billTotal);
+        tipTotal = billTotal - bill;
+        double billEach = billTotal / headCount;
+        CalculateAndDisplayRoundedPercentage(tipTotal);
+        DisplayTotals(billEach, tipTotal, billTotal);
+    }
+    void CalculateAndDisplayRoundedPercentage(double tipTotal){
+        int roundedTipPercent = (int) Math.round((tipTotal / bill) * 100);
+        String roundedTipString = roundedTipPercent + "%";
+        roundedTipTV.setText(roundedTipString);
+    }
+
+    void CalculateAndDisplayTotals(){
+        double tipTotal = tip * bill;
+        double billTotal = bill + tipTotal;
+        double billEach = billTotal / headCount;
+        CalculateAndDisplayPennies(billEach, billTotal);
+        DisplayTotals(billEach, tipTotal, billTotal);
+    }
+
+    void CalculateAndDisplayPennies(double billEach, double billTotal){
         double penniesEach = Math.floor(billEach * 100);
         double penniesTotal = Math.floor(billTotal * 100);
-        int pennies = findExtraPennies((int)penniesEach, (int)penniesTotal);
+        int pennies = (int)penniesTotal - ((int)penniesEach * headCount);
         String penniesString = "";
         if (pennies > 0) {
             if (pennies == 1){
@@ -216,13 +247,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         extraPenniesTV.setText(penniesString);
+    }
+
+    void DisplayTotals(double billEach, double tipTotal, double billTotal){
         billEachTV.setText(df.format(billEach));
         tipTotalTV.setText(df.format(tipTotal));
         billTotalTV.setText(df.format(billTotal));
-
     }
 
-    int findExtraPennies(int billEach, int billTotal){
-        return billTotal - (billEach * headCount);
-    }
 }
