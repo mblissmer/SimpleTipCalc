@@ -5,10 +5,10 @@
     <string name="rate">Rate</string>
     <string name="billHint">Bill Amount</string>
     <string name="penniesPt1">+</string>
-    <string name="penniesPt2"> Pennies</string>
-    <string name="pennyPt2"> Penny</string>
+    <string name="penniesPt2"> Cents</string>
+    <string name="pennyPt2"> Cent</string>
     <string name="headCountString">Head Count</string>
-    <string name="roundingString">Rounded</string>
+    <string name="roundingString">Rounded Up</string>
     <string name="tipPercentageString">Tip Percentage</string>
     <string name="billEachString">Bill Each:</string>
     <string name="tipTotalString">Tip:</string>

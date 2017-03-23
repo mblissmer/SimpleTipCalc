@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 doRounding = isChecked;
+                UpdateTotals();
             }
         });
 
@@ -172,10 +173,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     double roundUp(double input){
-        int roundTo;
-        if (input < 10) roundTo = 1;
-        else roundTo = 5;
-        return Math.ceil(input/roundTo) * roundTo;
+        int intInput = (int) Math.ceil(input);
+        while (intInput % headCount != 0){
+            intInput++;
+        }
+        return (double) intInput;
+//        int roundTo;
+//        if (input < 10) roundTo = 1;
+//        else roundTo = 5;
+//        return Math.ceil(input/roundTo) * roundTo;
     }
 
     void UpdateTotals(){
@@ -186,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
             //TODO
             tipTotal = tip * bill;
             billTotal = bill + tipTotal;
+            billTotal = roundUp(billTotal);
+            tipTotal = billTotal - bill;
             billEach = billTotal / headCount;
             //replace this, just wanted to suppress a warning
         } else {
