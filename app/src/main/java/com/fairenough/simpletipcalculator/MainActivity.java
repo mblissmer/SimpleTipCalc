@@ -12,6 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -37,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView billTotalTV;
     private TextView extraPenniesTV;
     private TextView roundedTipTV;
+    private TextView roundedPercentTitle;
+    private TextView billEachTitle;
+    private Animation fadeIn;
+    private Animation fadeOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,19 +54,33 @@ public class MainActivity extends AppCompatActivity {
         df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.DOWN);
 
+        //setting up animations
+        fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setDuration(1000);
+        fadeIn.setFillAfter(true);
+        fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setDuration(1000);
+        fadeOut.setFillAfter(true);
+
+
+
         //setting up all fields
         billEachTV  = (TextView)findViewById(R.id.billEachNum);
         tipTotalTV  = (TextView)findViewById(R.id.tipTotalNum);
         billTotalTV = (TextView)findViewById(R.id.billTotalNum);
         extraPenniesTV = (TextView) findViewById(R.id.extraPennies);
         roundedTipTV = (TextView) findViewById(R.id.roundedPercent);
-        final TextView billEachTitle = (TextView)findViewById(R.id.billEachText);
-        final TextView roundedPercentTitle = (TextView) findViewById(R.id.actualRoundedTipText);
+        billEachTitle = (TextView)findViewById(R.id.billEachText);
+        roundedPercentTitle = (TextView) findViewById(R.id.actualRoundedTipText);
 
         //setting up toolbar
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
         setSupportActionBar(mainToolbar);
         //end toolbar
+
+        //set initial visibilities for optional TextViews
+//        CheckFadedStateSplitBill(headCount, headCount);
+//        CheckFadedStateRounding(doRounding);
 
         //rounding switch
         final Switch rounding = (Switch) findViewById(R.id.roundSwitch);
@@ -67,16 +88,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 doRounding = isChecked;
-                if (isChecked){
-                    roundedTipTV.setVisibility(View.VISIBLE);
-                    roundedPercentTitle.setVisibility(View.VISIBLE);
-                    extraPenniesTV.setVisibility(View.INVISIBLE);
-                }
-                else {
-                    roundedTipTV.setVisibility(View.INVISIBLE);
-                    roundedPercentTitle.setVisibility(View.INVISIBLE);
-                    extraPenniesTV.setVisibility(View.VISIBLE);
-                }
+                CheckFadedStateRounding(isChecked);
                 UpdateTotals();
             }
         });
@@ -90,14 +102,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 headCount = newVal;
-                if (headCount == 1 && billEachTV.getVisibility() == View.VISIBLE){
-                    billEachTV.setVisibility(View.INVISIBLE);
-                    billEachTitle.setVisibility(View.INVISIBLE);
-                }
-                else if (headCount > 1 && billEachTV.getVisibility() == View.INVISIBLE){
-                    billEachTV.setVisibility(View.VISIBLE);
-                    billEachTitle.setVisibility(View.VISIBLE);
-                }
+                CheckFadedStateSplitBill(oldVal, newVal);
                 UpdateTotals();
             }
         });
@@ -191,6 +196,34 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (ActivityNotFoundException ex){
             return false;
+        }
+    }
+
+    private void CheckFadedStateRounding(boolean rounded){
+        if (rounded){
+            roundedTipTV.startAnimation(fadeIn);
+            roundedPercentTitle.startAnimation(fadeIn);
+            extraPenniesTV.startAnimation(fadeOut);
+
+        }
+        else {
+            roundedTipTV.startAnimation(fadeOut);
+            roundedPercentTitle.startAnimation(fadeOut);
+            extraPenniesTV.startAnimation(fadeIn);
+
+        }
+    }
+
+    private void CheckFadedStateSplitBill(int oldVal, int newVal){
+
+        if (newVal == 1){
+            billEachTV.startAnimation(fadeOut);
+            billEachTitle.startAnimation(fadeOut);
+
+        }
+        else if (newVal > 1 && oldVal == 1){
+            billEachTV.startAnimation(fadeIn);
+            billEachTitle.startAnimation(fadeIn);
         }
     }
 
