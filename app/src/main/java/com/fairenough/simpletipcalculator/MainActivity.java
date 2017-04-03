@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     private void SetInitialAlphas(){
         CheckFadedStateSplitBill(headCount, headCount);
         CheckFadedStateRounding(false);
+        extraCentsTV.startAnimation(fadeCentsOut);
     }
 
     private void InitializeRoundingSwitch(){
@@ -252,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
         tipTotal = billTotal - bill;
         double billEach = billTotal / headCount;
         CalculateAndDisplayRoundedPercentage(tipTotal);
+        CalculateAndDisplayRemainingCents(billEach, billTotal);
         DisplayTotals(billEach, tipTotal, billTotal);
     }
     void CalculateAndDisplayRoundedPercentage(double tipTotal){
@@ -272,13 +274,6 @@ public class MainActivity extends AppCompatActivity {
         double centsEach = Math.floor(billEach * 100);
         double centsTotal = Math.floor(billTotal * 100);
         int cents = (int)centsTotal - ((int)centsEach * headCount);
-        String centsString;
-        if (cents == 1){
-            centsString = getResources().getText(R.string.centsPt1) + String.valueOf(cents) + " " + getResources().getText(R.string.centPt2);
-        }
-        else {
-            centsString = getResources().getText(R.string.centsPt1) + String.valueOf(cents) + " " + getResources().getText(R.string.centsPt2);
-        }
         if (oldCents == 0 && cents != 0){
             extraCentsTV.startAnimation(fadeCentsIn);
         }
@@ -286,6 +281,14 @@ public class MainActivity extends AppCompatActivity {
             extraCentsTV.startAnimation(fadeCentsOut);
         }
         oldCents = cents;
+        String centsString;
+        if (cents == 1){
+            centsString = getResources().getText(R.string.centsPt1) + String.valueOf(cents) + " " + getResources().getText(R.string.centPt2);
+        }
+        else {
+            centsString = getResources().getText(R.string.centsPt1) + String.valueOf(cents) + " " + getResources().getText(R.string.centsPt2);
+        }
+
         extraCentsTV.setText(centsString);
     }
 
