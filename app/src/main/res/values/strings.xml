@@ -4,9 +4,9 @@
     <string name="shareSendText">Recommend This App Via:</string>
     <string name="rate">Rate</string>
     <string name="billHint">Bill Amount</string>
-    <string name="penniesPt1">+</string>
-    <string name="penniesPt2">Cents</string>
-    <string name="pennyPt2">Cent</string>
+    <string name="centsPt1">+</string>
+    <string name="centsPt2">Cents</string>
+    <string name="centPt2">Cent</string>
     <string name="roundedTip">Rounded Tip</string>
     <string name="headCountString">Head Count</string>
     <string name="roundingString">Rounded Up</string>

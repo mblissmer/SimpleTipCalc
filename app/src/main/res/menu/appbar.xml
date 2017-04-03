@@ -4,13 +4,13 @@
     <!-- Share Icon -->
     <item
         android:id="@+id/action_share"
-        android:icon="@drawable/share_blk"
+        android:icon="@drawable/share_icon"
         android:title="@string/share"
         app:showAsAction="ifRoom"/>
 
     <!-- Rate Icon -->
     <item android:id="@+id/action_rate"
-        android:icon="@drawable/star_blk"
+        android:icon="@drawable/star_icon"
         android:title="@string/rate"
         app:showAsAction="ifRoom"/>
 

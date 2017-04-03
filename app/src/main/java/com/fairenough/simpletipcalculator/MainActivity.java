@@ -22,8 +22,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
@@ -33,56 +31,85 @@ public class MainActivity extends AppCompatActivity {
     private double tip = 0.18;
     private double bill = 0;
     private int headCount = 1;
+    private int oldCents = 0;
     private DecimalFormat df;
     private boolean doRounding = false;
-    private TextView billEachTV;
-    private TextView tipTotalTV;
-    private TextView billTotalTV;
-    private TextView extraPenniesTV;
-    private TextView roundedTipTV;
-    private TextView roundedPercentTitle;
-    private TextView billEachTitle;
-    private Animation fadeIn;
-    private Animation fadeOut;
+    private TextView billEachTV, tipTotalTV, billTotalTV, extraCentsTV, roundedTipTV, roundedPercentTitle, billEachTitle;
+    private Animation fadeRoundingIn, fadeRoundingOut, fadeBillEachIn, fadeBillEachOut, fadeCentsIn, fadeCentsOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //set up decimal formatter
+        InitializeToolbar();
+        ConfigureDecimalFormatter();
+        ConfigureAnimations();
+        InitializeTextFields();
+        InitializeRoundingSwitch();
+        InitializeHeadCountPicker();
+        InitializeTipPercentPicker();
+        InitializeBillTextField();
+        SetInitialAlphas();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.appbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()) {
+            case R.id.action_rate:
+                LinkToRatingPage();
+                break;
+            case R.id.action_share:
+                ShareTheApp();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    private void InitializeToolbar(){
+        Toolbar mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+        setSupportActionBar(mainToolbar);
+    }
+
+    private void ConfigureDecimalFormatter(){
         df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.DOWN);
+    }
 
-        //setting up animations
-        fadeIn = new AlphaAnimation(0, 1);
-        fadeIn.setDuration(1000);
-        fadeIn.setFillAfter(true);
-        fadeOut = new AlphaAnimation(1, 0);
-        fadeOut.setDuration(1000);
-        fadeOut.setFillAfter(true);
+    private void ConfigureAnimations(){
+        fadeRoundingIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        fadeRoundingOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+        fadeBillEachIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        fadeBillEachOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+        fadeCentsIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        fadeCentsOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+    }
 
-
-
-        //setting up all fields
+    private void InitializeTextFields(){
         billEachTV  = (TextView)findViewById(R.id.billEachNum);
         tipTotalTV  = (TextView)findViewById(R.id.tipTotalNum);
         billTotalTV = (TextView)findViewById(R.id.billTotalNum);
-        extraPenniesTV = (TextView) findViewById(R.id.extraPennies);
+        extraCentsTV = (TextView) findViewById(R.id.extraCents);
         roundedTipTV = (TextView) findViewById(R.id.roundedPercent);
         billEachTitle = (TextView)findViewById(R.id.billEachText);
         roundedPercentTitle = (TextView) findViewById(R.id.actualRoundedTipText);
+    }
 
-        //setting up toolbar
-        Toolbar mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
-        setSupportActionBar(mainToolbar);
-        //end toolbar
+    private void SetInitialAlphas(){
+        CheckFadedStateSplitBill(headCount, headCount);
+        CheckFadedStateRounding(false);
+    }
 
-        //set initial visibilities for optional TextViews
-//        CheckFadedStateSplitBill(headCount, headCount);
-//        CheckFadedStateRounding(doRounding);
-
-        //rounding switch
+    private void InitializeRoundingSwitch(){
         final Switch rounding = (Switch) findViewById(R.id.roundSwitch);
         rounding.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -92,8 +119,9 @@ public class MainActivity extends AppCompatActivity {
                 UpdateTotals();
             }
         });
+    }
 
-        //headcount number picker
+    private void InitializeHeadCountPicker(){
         final NumberPicker hcp = (NumberPicker) findViewById(R.id.headCountPicker);
         hcp.setMinValue(1);
         hcp.setMaxValue(10);
@@ -106,8 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 UpdateTotals();
             }
         });
+    }
 
-        //tip amount number picker
+    private void InitializeTipPercentPicker(){
         final String[] displayedTipAmounts = {"18", "20", "25", "30"};
         final NumberPicker tpp = (NumberPicker) findViewById(R.id.tipPercentPicker);
         tpp.setMinValue(0);
@@ -121,10 +150,9 @@ public class MainActivity extends AppCompatActivity {
                 UpdateTotals();
             }
         });
+    }
 
-
-
-
+    private void InitializeBillTextField(){
         //setting up bill text field
         final EditText billField = (EditText) findViewById(R.id.billField);
         billField.addTextChangedListener(new TextWatcher() {
@@ -153,28 +181,6 @@ public class MainActivity extends AppCompatActivity {
         //end bill text field
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.appbar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()) {
-            case R.id.action_rate:
-                LinkToRatingPage();
-                break;
-            case R.id.action_share:
-                ShareTheApp();
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
-
     private void LinkToRatingPage(){
         Intent rateMe = new Intent(Intent.ACTION_VIEW);
         rateMe.setData(Uri.parse("market://details?id=com.fairenough.simpletipcalculator"));
@@ -201,29 +207,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void CheckFadedStateRounding(boolean rounded){
         if (rounded){
-            roundedTipTV.startAnimation(fadeIn);
-            roundedPercentTitle.startAnimation(fadeIn);
-            extraPenniesTV.startAnimation(fadeOut);
-
+            roundedTipTV.startAnimation(fadeRoundingIn);
+            roundedPercentTitle.startAnimation(fadeRoundingIn);
         }
         else {
-            roundedTipTV.startAnimation(fadeOut);
-            roundedPercentTitle.startAnimation(fadeOut);
-            extraPenniesTV.startAnimation(fadeIn);
-
+            roundedTipTV.startAnimation(fadeRoundingOut);
+            roundedPercentTitle.startAnimation(fadeRoundingOut);
         }
     }
 
     private void CheckFadedStateSplitBill(int oldVal, int newVal){
 
         if (newVal == 1){
-            billEachTV.startAnimation(fadeOut);
-            billEachTitle.startAnimation(fadeOut);
+            billEachTV.startAnimation(fadeBillEachOut);
+            billEachTitle.startAnimation(fadeBillEachOut);
 
         }
         else if (newVal > 1 && oldVal == 1){
-            billEachTV.startAnimation(fadeIn);
-            billEachTitle.startAnimation(fadeIn);
+            billEachTV.startAnimation(fadeBillEachIn);
+            billEachTitle.startAnimation(fadeBillEachIn);
         }
     }
 
@@ -262,24 +264,29 @@ public class MainActivity extends AppCompatActivity {
         double tipTotal = tip * bill;
         double billTotal = bill + tipTotal;
         double billEach = billTotal / headCount;
-        CalculateAndDisplayPennies(billEach, billTotal);
+        CalculateAndDisplayRemainingCents(billEach, billTotal);
         DisplayTotals(billEach, tipTotal, billTotal);
     }
 
-    void CalculateAndDisplayPennies(double billEach, double billTotal){
-        double penniesEach = Math.floor(billEach * 100);
-        double penniesTotal = Math.floor(billTotal * 100);
-        int pennies = (int)penniesTotal - ((int)penniesEach * headCount);
-        String penniesString = "";
-        if (pennies > 0) {
-            if (pennies == 1){
-                penniesString = getResources().getText(R.string.penniesPt1) + String.valueOf(pennies) + " " + getResources().getText(R.string.pennyPt2);
-            }
-            else {
-                penniesString = getResources().getText(R.string.penniesPt1) + String.valueOf(pennies) + " " + getResources().getText(R.string.penniesPt2);
-            }
+    void CalculateAndDisplayRemainingCents(double billEach, double billTotal){
+        double centsEach = Math.floor(billEach * 100);
+        double centsTotal = Math.floor(billTotal * 100);
+        int cents = (int)centsTotal - ((int)centsEach * headCount);
+        String centsString;
+        if (cents == 1){
+            centsString = getResources().getText(R.string.centsPt1) + String.valueOf(cents) + " " + getResources().getText(R.string.centPt2);
         }
-        extraPenniesTV.setText(penniesString);
+        else {
+            centsString = getResources().getText(R.string.centsPt1) + String.valueOf(cents) + " " + getResources().getText(R.string.centsPt2);
+        }
+        if (oldCents == 0 && cents != 0){
+            extraCentsTV.startAnimation(fadeCentsIn);
+        }
+        else if (cents == 0 && oldCents != 0){
+            extraCentsTV.startAnimation(fadeCentsOut);
+        }
+        oldCents = cents;
+        extraCentsTV.setText(centsString);
     }
 
     void DisplayTotals(double billEach, double tipTotal, double billTotal){

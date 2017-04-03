@@ -12,7 +12,7 @@
         android:layout_height="56dp"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -203,7 +203,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
     <TextView
-        android:id="@+id/extraPennies"
+        android:id="@+id/extraCents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="0dp"
