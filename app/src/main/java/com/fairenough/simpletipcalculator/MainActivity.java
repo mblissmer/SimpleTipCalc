@@ -11,8 +11,6 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
@@ -21,15 +19,17 @@ import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private double tip = 0.18;
+    private double tip = 0.2;
     private double bill = 0;
+    private double tipTotal;
+    private double billTotal;
+    private double billEach;
     private int headCount = 1;
     private int oldCents = 0;
     private DecimalFormat df;
@@ -138,12 +138,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitializeTipPercentPicker(){
-        final String[] displayedTipAmounts = {"18", "20", "25", "30"};
+        final String[] displayedTipAmounts = {"15", "18", "20", "25", "30"};
         final NumberPicker tpp = (NumberPicker) findViewById(R.id.tipPercentPicker);
         tpp.setMinValue(0);
         tpp.setMaxValue(displayedTipAmounts.length-1);
         tpp.setDisplayedValues(displayedTipAmounts);
         tpp.setWrapSelectorWheel(false);
+        tpp.setValue(2);
         tpp.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -158,10 +159,7 @@ public class MainActivity extends AppCompatActivity {
         final EditText billField = (EditText) findViewById(R.id.billField);
         billField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
@@ -170,16 +168,13 @@ public class MainActivity extends AppCompatActivity {
                 catch(NullPointerException|NumberFormatException ex){
                     bill = 0;
                 }
-
                 UpdateTotals();
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 UpdateTotals();
             }
         });
-        //end bill text field
     }
 
     private void LinkToRatingPage(){
@@ -230,47 +225,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    double roundUp(double input){
-        int intInput = (int) Math.ceil(input);
-        while (intInput % headCount != 0){
-            intInput++;
-        }
-        return (double) intInput;
-    }
-
-    void UpdateTotals(){
+    private void UpdateTotals(){
+        CalculateTotals();
         if (doRounding){
-            CalculateAndDisplayTotalsWithRounding();
-        } else {
-            CalculateAndDisplayTotals();
+            RoundTotals();
         }
+        billEach = billTotal / headCount;
+        CalculateAndDisplayRemainingCents();
+        DisplayTotals();
     }
 
-    void CalculateAndDisplayTotalsWithRounding(){
-        double tipTotal = tip * bill;
-        double billTotal = bill + tipTotal;
-        billTotal = roundUp(billTotal);
-        tipTotal = billTotal - bill;
-        double billEach = billTotal / headCount;
-        CalculateAndDisplayRoundedPercentage(tipTotal);
-        CalculateAndDisplayRemainingCents(billEach, billTotal);
-        DisplayTotals(billEach, tipTotal, billTotal);
+    private void CalculateTotals(){
+        tipTotal = tip * bill;
+        billTotal = bill + tipTotal;
     }
-    void CalculateAndDisplayRoundedPercentage(double tipTotal){
+
+    private void RoundTotals(){
+        int roundedBillTotal = (int) Math.round(billTotal);
+        tipTotal = roundedBillTotal - bill;
         int roundedTipPercent = (int) Math.round((tipTotal / bill) * 100);
+        if (roundedTipPercent < 15){
+            roundedBillTotal = (int) Math.ceil(billTotal);
+        }
+        while (roundedBillTotal % headCount != 0){
+            roundedBillTotal++;
+        }
+        tipTotal = roundedBillTotal - bill;
+        billTotal = roundedBillTotal;
+        roundedTipPercent = (int) Math.round((tipTotal / bill) * 100);
         String roundedTipString = roundedTipPercent + "%";
         roundedTipTV.setText(roundedTipString);
     }
 
-    void CalculateAndDisplayTotals(){
-        double tipTotal = tip * bill;
-        double billTotal = bill + tipTotal;
-        double billEach = billTotal / headCount;
-        CalculateAndDisplayRemainingCents(billEach, billTotal);
-        DisplayTotals(billEach, tipTotal, billTotal);
-    }
-
-    void CalculateAndDisplayRemainingCents(double billEach, double billTotal){
+    private void CalculateAndDisplayRemainingCents(){
         double centsEach = Math.floor(billEach * 100);
         double centsTotal = Math.floor(billTotal * 100);
         int cents = (int)centsTotal - ((int)centsEach * headCount);
@@ -292,10 +279,9 @@ public class MainActivity extends AppCompatActivity {
         extraCentsTV.setText(centsString);
     }
 
-    void DisplayTotals(double billEach, double tipTotal, double billTotal){
+    private void DisplayTotals(){
         billEachTV.setText(df.format(billEach));
         tipTotalTV.setText(df.format(tipTotal));
         billTotalTV.setText(df.format(billTotal));
     }
-
 }

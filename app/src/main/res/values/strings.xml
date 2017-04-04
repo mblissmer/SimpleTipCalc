@@ -9,7 +9,7 @@
     <string name="centPt2">Cent</string>
     <string name="roundedTip">Rounded Tip</string>
     <string name="headCountString">Head Count</string>
-    <string name="roundingString">Rounded Up</string>
+    <string name="roundingString">Rounded</string>
     <string name="tipPercentageString">Tip Percentage</string>
     <string name="billEachString">Bill Each:</string>
     <string name="tipTotalString">Tip:</string>
